@@ -1,0 +1,1014 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									Cyberball: 3 PLAYERS
+___________________________________________________________________________________________________________________	
+
+Script Author: Sean Draine, PhD
+last updated:  11-08-2019 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 11-08-2019 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the Cyberball paradigm based on:
+
+Williams, K. D., Cheung, C. K. T., & Choi, W. (2000). CyberOstracism: Effects of being ignored over 
+the Internet. Journal of Personality and Social Psychology, 79, 748-762.
+
+Williams, K. D., & Jarvis, B. (2006). Cyberball: A program for use in research on ostracism and interpersonal 
+acceptance. Behavior Research Methods, Instruments, and Computers, 38, 174-180.
+
+see also: http://www1.psych.purdue.edu/~willia55/Announce/cyberball.htm
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participant plays ball with 2 other participants (= the computer). It can be predefined with what
+probability the computer includes/excludes the participant into the ball game.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 4 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: '3playercyberball_raw*.iqdat' (a separate file for each participant)
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time, 							date and time script was run 
+subject, group, 					with the current subject/groupnumber
+script.sessionid:					with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum:  				the name and number of the currently recorded trial
+									(Note: not all trials that are run might record data) 
+									Trialcode Explanation: 
+									Examples:
+									"1to2" => in this trial player 2 (participant) throws the ball AFTER getting it from player 1
+									"1to3" => in this trial player 3 throws the ball AFTER getting it from player 1 (random selection decides whether player 3 throws to player 1)
+
+player:							stores the current player (1, 2, 3)
+recipient:							stores the recipient of the current ball toss (1, 2, 3)									
+response:							the (participant's) response
+latency: 							the response latency in ms
+
+count_ignore2:					counts how often player 2 (participant) was "ignored" before a throw (resets every time
+									player 2 gets to throw the ball)
+
+(2) Summary data file: '3playercyberball_summary*.iqdat' (a separate file for each participant)
+
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+script.startdate:					date script was run
+script.starttime:					time script was started
+script.subjectid:					assigned subject id number
+script.groupid:					assigned group id number
+script.sessionid:					assigned session id number
+script.elapsedtime:				time it took to run script (in ms); measured from onset to offset of script
+script.completed:					0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+								
+
+parameters.showpictures:		true = pictures of players are onscreen (default)
+									false = no pictures are presented
+								
+parameters.showlabels:			true = labels of players are onscreen (default)
+									false = no labels are presented
+
+item.player1.1-
+item.player3label.1:				images and labels used for the various players
+
+max_trialcount:					maximum number of trials (= passes between all players) played		
+
+ignore2_streak1: 					the number of times player 2 (participant) was ignored before player2 (participant) gets to respond for the first time
+
+max_ignore2:						the longest streak of ignoring player 2 (participant) in the game that participant experienced
+									before being able to respond
+
+count_player1throws:			counts the number of times that player 1 gets to throw the ball
+count_player3throws:			counts the number of times that player 3 gets to throw the ball
+count_player2throws:			counts the number of times that participant gets to throw the ball
+meanRT_player2:					mean latency (in ms) of participant throw
+
+count_12:							counts the number of times that player 1 throws to player 2 (participant)
+percent_12:						percentage of player 1 throws that play to player 2 (participant)
+count_21:							counts the number of times that player 2 (participant) throws to player 1
+percent_21:						percentage of player 2 throws (participant) that play to player 1
+meanRT_21:							mean latency (in ms) of player 2 (participant) decisions to throw to player 1
+
+count_32:							counts the number of times that player 3 throws to player 2 (participant)
+percent_32:						percentage of player 3 throws that play to player 2 (participant)
+count_23:							counts the number of times that player 2 (participant) throws to player 3
+percent_23:						percentage of player 2 throws (participant) that play to player 3
+meanRT_23:							mean latency (in ms) of player 2 (participant) decisions to throw to player 3
+
+percent_sameplayer:				percentage of player 2 (participant) throws when player 2 throws the ball back to the player who threw the ball to participant
+									Note: random selection -> 1/2 times of all player 2 throws
+									
+percent_otherplayer:				percentage of player 2 (participant) throws when player 2 throws ball to the player who didn't threw the ball to participant
+									Note: random selection -> 1/2 times of all player 2 throws
+									
+meanRT_sameplayer:				mean latency (in ms) of trials in which player2 (participant) throws ball back to the player who threw the ball to participant
+meanRT_otherplayer:				mean latency (in ms) of trials in which player2 (participant) throws ball to the player who didn't threw the ball to participant
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+* Participant plays ball with 2 other players for 50 trials.
+The number of trials can be edited under section EDITABLE PARAMETERS.
+
+* By default, all players are represented by names and pictures. 
+Names and pictures can be edited under section EDITABLE STIMULI.
+To remove names or pictures go to EDITABLE PARAMETERS.
+
+* By default, player 1 throws the ball to participant (= player 2) with a pre-determined probability (default: 25% of the times) 
+as does Player 3 (default: 25% of the times). The probabilities can be edited under section EDITABLE LISTS.
+The player schedules can further be customized to dictate specific/fixed throw sequences for each of the 
+"computer player". Go to section EDITABLE LISTS for further instructions.
+
+* Decision Times for Player 1 and 3 are controlled by expressions.cyberdecisiontime under
+EDITABLE PARAMETERS.
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________	
+picture examples are provided by Millisecond Software. They can easily be edited under section
+Editable Stimuli
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/max_trialcount:		maximum number of trials (= passes between the players) played
+		
+/showpictures:		true = pictures of players are onscreen (default)
+					false = no pictures are presented
+					
+/showlabels:			true = labels of players are onscreen (default)
+					false = no labels are presented
+						
+NOTE: parameters.showpictures and parameters.showlabels cannot be set to false at the same time.
+
+/ cyberdecisiontime: 	selects without replacement (noreplace) one of the 4 decision times for players1 and 3
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ max_trialcount = 5
+/ showpictures = true
+/ showlabels = true
+</parameters>
+
+
+<expressions>
+/ cyberdecisiontime =replace(500, 1000, 1500, 2000)
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+***********************
+Player Pictures
+***********************
+
+<item player1>
+/ 1 = "cassie.jpg"
+</item>
+
+Note: the participant is player 2
+<item player2>
+/ 1 = "kip.jpg"
+</item>
+
+<item player3>
+/ 1 = "trevor.jpg"
+</item>
+
+***********************
+Player Labels
+***********************
+<item player1label>
+/ 1 = "Aさん"
+</item>
+
+<item player3label>
+/ 1 = "Bさん"
+</item>
+
+will be filled in automatically with participant input:
+<item player2label>
+/ 1 = "<%capitalize(textbox.name.response)%>"
+</item>
+
+***********************
+Animation Movies
+***********************
+<item animations>
+/ 1 = "1to2.gif"
+/ 2 = "1to3.gif"
+/ 3 = "2to1.gif"
+/ 4 = "2to3.gif"
+/ 5 = "3to1.gif"
+/ 6 = "3to2.gif"
+</item>
+
+***********************
+static images
+***********************
+<picture start>
+/ items = ("start.gif")
+/ erase = false
+/ size = (30%, 30%)
+</picture>
+
+<picture cyberball>
+/ items = ("cyberball.gif")
+/ position = (50%, 10%)
+/ size = (20%, 20%)
+</picture>
+
+<picture cyberboy>
+/ items = ("cyberboy.gif")
+/ position = (50%, 30%)
+/ size = (20%, 20%)
+</picture>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item instructions>
+/ 1 = "サイバーボール課題へようこそ! 今からオンラインのプレイヤーとキャッチボールをしてもらいます。"
+
+/ 2 = "本実験の目的は心的イメージの効果を確かめることです。そのため、実験協力者の方に心的イメージのトレーニングをしてもらう必要があり、オンラインのキャッチボールゲームを行うのが効果的であることを発見しました。
+これから、他の協力者と共にオンラインでキャッチボールをしてもらいます。 実験は非常にシンプルで、あなたにボールが投げられたら、投げたいプレイヤーを選んでください（<%expressions.buttoninstruct2%>）。
+
+重要なのは、キャッチボールのパフォーマンスではなく、実験を心的に視覚化することです。他のプレイヤーがどのようにプレーしていて、どのような人でどこで一緒にプレーしているのか、もし日常生活のなかで一緒にキャッチボールをしていたらどんな感じか、イメージしながらプレーしてください。
+
+準備はいいですか? よければStartを押してください（<%expressions.buttoninstruct1%>）。"
+</item>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.haskeyboard) {"Touch";} else {"click";}
+/buttoninstruct2 = if (computer.touch && !computer.haskeyboard) {"touch";} else {"click on";}
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: by default player 1 and player 3 throw to player 2 roughly 25% of the time (1 out 4 times)
+
+The item lists of these schedules can be further controlled by setting a specific/fixed throw sequence: 
+Example Player 1:
+
+/items = (3, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 3, 2, 3, 2, 3, 3, 3, 3, 3, 3, 3)
+/ここで確率を変えられる
+/selectionmode = sequence
+
+(if selectionmode = sequence => it is suggested to create the list as long as (parameters.max_trialcount/2)
+to ensure that the beginning of the list does NOT get repeated)
+
+<list player1schedule>
+/ items = (3, 3, 3, 2)
+/ replace = false
+</list>
+
+<list player3schedule>
+/ items = (1, 1, 1, 2)
+/ replace = false
+</list>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.0.0.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.0.0.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ screencolor = black
+/ txbgcolor = black
+/ txcolor = white
+/ inputdevice = keyboard
+/ validresponse = ("H", "J"," ")
+/ correctresponse = ("H")
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA: this section contains data file information (customize)
+**************************************************************************************************************
+**************************************************************************************************************
+
+*************
+raw data
+*************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, script.sessionid, blockcode, blocknum, 
+trialcode, trialnum, 
+values.player, values.recipient, response, latency, values.count_ignore2)
+</data>
+
+*************
+summary data: remove variables that are not of interest
+*************
+
+<summarydata>
+/ columns = (computer.platform, script.startdate, script.starttime, script.subjectid, script.groupid, script.sessionid, script.elapsedtime, 
+script.completed,
+parameters.showpictures, parameters.showlabels,
+item.player1.1, item.player1label.1, item.player2.1, item.player2label.1, item.player3.1, item.player3label.1,
+parameters.max_trialcount, values.ignore2_streak1, values.max_ignore2, 
+values.count_player1throws, values.count_player3throws, values.count_player2throws, expressions.meanRT_player2,
+values.count_12, expressions.perc_12, values.count_21, expressions.perc_21, expressions.meanRT_21,
+values.count_32, expressions.perc_32, values.count_23, expressions.perc_23, expressions.meanRT_23,
+expressions.perc_sameplayer, expressions.perc_otherplayer, expressions.meanRT_sameplayer, expressions.meanRT_otherplayer)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	AUTOMATICALLY UPDATED VALUES
+**************************************************************************************************************
+**************************************************************************************************************
+/player:							stores the current player (1, 2, 3)
+/recipient:							stores the recipient of the current ball toss (1, 2, 3)
+
+/count_player1throws:				counts the number of times that player 1 gets to throw the ball
+/count_player3throws:				counts the number of times that player 3 gets to throw the ball
+/count_player2throws:				counts the number of times that player 2 (participant) gets to throw the ball
+
+/sumrt_player2:						sums the latencies of player2 throws (participant)
+/sumrt_21:							sums the latencies of player 2 throws (participant) to player 1
+/sumrt_23:							sums the latencies of player 2 throws (participant) to player 3
+
+/count_ignore2:						counts how often player 2 (participant) was "ignored" before a throw (resets every time
+									player 2 gets to throw the ball)
+/max_ignore2:						the longest streak of ignoring player 2 in the game that participant experienced
+									before responding
+/ignore2_streak1: 					the ignorestreak before player2 (participant) gets to respond for the first time
+
+/count_12:							counts the number of times that player 1 throws to player 2 (participant)
+/count_32:							counts the number of times that player 3 throws to player 2 (participant)
+/count_13:							counts the number of times that player 1 throws to player 3
+/count_31:							counts the number of times that player 3 throws to player 1
+/count_21:							counts the number of times that player 2 (participant) throws to player 1
+/count_23:							counts the number of times that player 2 (participant) throws to player 3
+
+/count_121:							counts how often player2 (participant) throws the ball back to player 1 (after getting it from player 1)
+/count_323:							counts how often player2 (participant) throws the ball back to player 3 (after getting it from player 3)
+/count_123:							counts how often player2 (participant) throws the ball to player 3 after getting it from player 1
+/count_321:							counts how often player2 (participant) throws the ball to player 1 after getting it from player 3
+
+/sumrt_121:							sums latencies for all trials in which player2 (participant) throws the ball back to player 1  (after getting it from player 1)
+/sumrt_323:							sums latencies for all trials in which player2 (participant) throws the ball back to player 3 (after getting it from player 3)
+/sumrt_123:							sums latencies for all trials in which player2 (participant) throws the ball to player 3 after getting it from player 1
+/sumrt_321:							sums latencies for all trials in which player2 (participant) throws the ball to player 1 after getting it from player 3
+
+<values>
+/ player = 0
+/ recipient = 0
+
+/ count_player1throws = 0
+/ count_player3throws = 0
+/ count_player2throws = 0
+
+/ sumrt_player2 = 0
+/ sumrt_21 = 0
+/ sumrt_23 = 0
+
+/ count_ignore2 = 0
+/ max_ignore2 = 0
+/ ignore2_streak1 = 0
+
+/ count_12 = 0
+/ count_32 = 0
+/ count_13 = 0
+/ count_31 = 0
+/ count_21 = 0
+/ count_23 = 0
+
+/ count_121 = 0
+/ count_323 = 0
+/ count_123 = 0
+/ count_321 = 0
+
+/ sumrt_121 = 0
+/ sumrt_323 = 0
+/ sumrt_123 = 0
+/ sumrt_321 = 0
+</values>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+/meanRT_player2:			mean latency of player 2 throws (participant)
+/meanRT_21:					mean latency of player 2 (participant) decisions to throw to player 1
+/meanRT_23:					mean latency of player 2 (participant) decisions to throw to player 3
+
+/perc_12:					percentage of player 1 throws that play to player 2 (participant)
+/perc_21:					percentage of player 2 throws (participant) that play to player 1
+/perc_32:					percentage of player 3 throws that play to player 2 (participant)
+/perc_23:					percentage of player 2 throws (participant) that play to player 3
+
+/perc_sameplayer:			percentage of player 2 (participant) throws when player 2 throws the ball back to the player who threw the ball to participant
+								Note: random selection -> 1/2 times of all player 2 throws
+/perc_otherplayer:			percentage of player 2 (participant) throws when player 2 throws ball to the player who didn't threw the ball to participant
+								Note: random selection -> 1/2 times of all player 2 throws
+
+/meanRT_sameplayer:			mean latencies of trials in which player2 (participant) throws ball back to the player who threw the ball to participant
+/meanRT_otherplayer:		mean latencies of trials in which player2 (participant) throws ball to the player who didn't threw the ball to participant
+
+
+<expressions>
+/ meanRT_player2 = values.sumrt_player2/values.count_player2throws
+/ meanRT_21 = values.sumrt_21/values.count_21
+/ meanRT_23 = values.sumrt_23/values.count_23
+
+/ perc_12 = (values.count_12/values.count_player1throws) * 100
+/ perc_21 = (values.count_21/values.count_player2throws) * 100
+/ perc_32 = (values.count_32/values.count_player3throws) * 100
+/ perc_23 = (values.count_23/values.count_player2throws) * 100
+
+/ perc_sameplayer = ((values.count_121 + values.count_323)/values.count_player2throws) * 100
+/ perc_otherplayer = ((values.count_123 + values.count_321)/values.count_player2throws) * 100
+
+/ meanRT_sameplayer = (values.sumrt_121 + values.sumrt_323)/(values.count_121 + values.count_323)
+/ meanRT_otherplayer = (values.sumrt_123 + values.sumrt_321)/(values.count_123 + values.count_321)
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS: 
+**************************************************************************************************************
+**************************************************************************************************************
+<text welcome>
+/ items = instructions
+/ select = 1
+/ position = (50%, 40%)
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 0)
+/ txcolor = white
+/ valign = top
+</text>
+
+<text instructions>
+/ items = instructions
+/ select = 2
+/ position = (50%, 45%)
+/ fontstyle = ("Arial", 1.5%)
+/ size = (80%, 30%)
+/ hjustify = left
+/ txcolor = white
+/ valign = top
+</text>
+
+<text startlabel>
+/ items = ("Start")
+/ position = (50%, 80%)
+/ fontstyle = ("Arial", 3%, false, false, true, false, 5, 0)
+/ txcolor = white
+</text>
+
+<shape blankscreen>
+/ shape = rectangle
+/ size = (100%, 100%)
+/ color = white
+</shape>
+
+************TRIALS & BLOCKS****************************
+<trial instructions>
+/ stimulusframes = [1=cyberball, cyberboy, welcome, instructions, startlabel]
+/ validresponse = (startlabel)
+/ responsemessage = (startlabel, blankscreen, 0)
+/ recorddata = false
+</trial>
+
+<block instructions>
+/ trials = [1=instructions; 2=name]
+</block>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<picture player1>
+/ items = player1
+/ position = (25%, 45%)
+/ valign = bottom
+/ erase = false
+/ size = (10%, 10%)
+</picture>
+
+<text player1label>
+/ items = player1label
+/ position = (25%, 45%)
+/ halign = center
+/ valign = top
+/ erase = false
+</text>
+
+<picture player2>
+/ items = player2
+/ position = (50%, 75%)
+/ valign = bottom
+/ erase = false
+/ size = (10%, 10%)
+</picture>
+
+<text player2label>
+/ items = player2label
+/ position = (50%, 75%)
+/ valign = top
+/ erase = false
+</text>
+
+<picture player3>
+/ items = player3
+/ position = (75%, 45%)
+/ valign = bottom
+/ erase = false
+/ size = (10%, 10%)
+</picture>
+
+<text player3label>
+/ items = player3label
+/ position = (75%, 45%)
+/ valign = top
+/ erase = false
+</text>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	ANIMATION VIDEOS
+**************************************************************************************************************
+**************************************************************************************************************
+<video 1to2>
+/ items = animations
+/ select = 1
+/ playthrough = true
+/ size = (30%, 30%)
+</video>
+
+<picture 1to2_static>
+/ items = animations
+/ select = 1
+/ size = (30%, 30%)
+</picture>
+
+<video 1to3>
+/ items = animations
+/ select = 2
+/ playthrough = true
+/ size = (30%, 30%)
+</video>
+
+<picture 1to3_static>
+/ items = animations
+/ select = 2
+/ size = (30%, 30%)
+</picture>
+
+<video 2to1>
+/ items = animations
+/ select = 3
+/ playthrough = true
+/ size = (30%, 30%)
+</video>
+
+<picture 2to1_static>
+/ items = animations
+/ select = 3
+/ size = (30%, 30%)
+</picture>
+
+<video 2to3>
+/ items = animations
+/ select = 4
+/ playthrough = true
+/ size = (30%, 30%)
+</video>
+
+<picture 2to3_static>
+/ items = animations
+/ select = 4
+/ size = (30%, 30%)
+</picture>
+
+<video 3to1>
+/ items = animations
+/ select = 5
+/ playthrough = true
+/ size = (30%, 30%)
+</video>
+
+<picture 3to1_static>
+/ items = animations
+/ select = 5
+/ size = (30%, 30%)
+</picture>
+
+<video 3to2>
+/ items = animations
+/ select = 6
+/ playthrough = true
+/ size = (30%, 30%)
+</video>
+
+<picture 3to2_static>
+/ items = animations
+/ select = 6
+/ size = (30%, 30%)
+</picture>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	SURVEYPAGE: INQUIRIES ABOUT PLAYER
+**************************************************************************************************************
+**************************************************************************************************************
+*you label gets dynamically set during runtime in surveypage.name
+<text youlabel>
+/ position = (50%, 80%)
+/ valign = bottom
+/ erase = false
+</text>
+
+<textbox name>
+/ caption = "名前を入れてください(ローマ字))"
+/ required = true
+/ mask = alphabetic
+/ position = (30%, 45%)
+/ textboxsize = (50%, 5%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</textbox>
+
+<surveypage name>
+/ showquestionnumbers = false
+/ questions = [1=name]
+/ ontrialend = [text.youlabel.item = textbox.name.response]
+/ showpagenumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (20%, 5%)
+/ nextbuttonposition = (45%, 65%)
+</surveypage>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	MAIN TRIALS
+**************************************************************************************************************
+**************************************************************************************************************
+Note: trial.start always "plays" player 1 - a random selection decides whether player 1 throws to
+player 3 or player 2 (-> list.player1schedule)
+
+<trial start>
+/ ontrialbegin = [
+	values.player = 1;
+	if (parameters.showpictures == true) {	
+		trial.start.insertstimulusframe(picture.player1, 1);
+		trial.start.insertstimulusframe(picture.player2, 1);
+		trial.start.insertstimulusframe(picture.player3, 1)
+	};
+	if (parameters.showlabels == true) {
+		trial.start.insertstimulusframe(text.player1label, 1);
+		trial.start.insertstimulusframe(text.player2label, 1);
+		trial.start.insertstimulusframe(text.player3label, 1);
+	};
+		
+]
+/ stimulusframes = [1 = start]
+/ validresponse = (noresponse)
+/ trialduration = 0
+/ ontrialend = [
+	if (list.player1schedule.nextvalue == 2) {
+		values.recipient = 2; 
+		values.count_player1throws += 1; 
+		values.count_12 += 1; 
+		values.count_ignore2 = 0;
+	} else if (list.player1schedule.nextvalue == 3) {
+		values.recipient = 3; 
+		values.count_player1throws += 1; 
+		values.count_13 += 1; 
+		values.count_ignore2 += 1;
+	};
+	trial.start.resetstimulusframes();
+]
+/ branch = [
+	if (list.player1schedule.currentvalue == 2) {
+		return trial.1to2;
+	} else if (list.player1schedule.currentvalue == 3) {
+		return trial.1to3;
+	};
+]
+</trial>
+
+Note: trial.1to2 => video shows player 1 throwing the ball to player 2 after expressions.cyberdecisiontime. 
+Player 3 (= values.player) then has to decide where to throw the ball next (= values.recipient)
+<trial 1to2>
+/ ontrialbegin = [
+	values.player = 2;
+	if (values.count_ignore2 > values.max_ignore2) 
+		values.max_ignore2 = values.count_ignore2;
+	if (values.ignore2_streak1 == 0) 
+		values.ignore2_streak1 = values.max_ignore2;
+		
+	trial.1to2.insertstimulustime(video.1to2, expressions.cyberdecisiontime);
+]
+/ stimulustimes = [1= 1to2_static]
+/ validresponse = (player1, player3, player1label, player3label)
+/ ontrialend = [
+	trial.1to2.resetstimulusframes();
+	
+	values.sumrt_player2 += trial.1to2.latency;
+	if (trial.1to2.response == "player1" || trial.1to2.response == "player1label") {
+		values.recipient = 1; 
+		values.count_player2throws += 1; 
+		values.count_21 += 1; 
+		values.sumrt_21 += trial.1to2.latency; 
+		values.count_121 += 1; 
+		values.sumrt_121 += trial.1to2.latency;
+	} else if (trial.1to2.response == "player3" || trial.1to2.response == "player3label") {
+		values.recipient = 3; 
+		values.count_player2throws += 1; 
+		values.count_23 += 1; 
+		values.sumrt_23 += trial.1to2.latency; 
+		values.count_123 += 1; 
+		values.sumrt_123 += trial.1to2.latency;
+	};
+]
+/ branch = [
+	if (values.recipient == 1) {
+		return trial.2to1;
+	} else if (values.recipient == 3) {
+		return trial.2to3;
+	};
+]
+</trial>
+
+Note: trial.1to3 => video shows player 1 throwing the ball to player 3 after expressions.cyberdecisiontime. 
+Player 3 (= values.player) then has to 'decide' where to throw the ball next (= values.recipient) based on
+list.player3schedule
+<trial 1to3>
+/ ontrialbegin = [
+	values.player = 3;
+	if (values.count_ignore2 > values.max_ignore2) 
+		values.max_ignore2 = values.count_ignore2;
+		
+	trial.1to3.insertstimulustime(video.1to3, expressions.cyberdecisiontime);
+]
+/ stimulusframes = [1= 1to3_static]
+/ validresponse = (noresponse)
+/ trialduration= 0
+/ ontrialend = [
+	trial.1to3.resetstimulusframes();
+	
+	if (list.player3schedule.nextvalue == 1) {
+		values.recipient = 1; 
+		values.count_player3throws += 1; 
+		values.count_31 += 1; 
+		values.count_ignore2 += 1;
+	} else if (list.player3schedule.nextvalue == 2) {
+		values.recipient = 2; 
+		values.count_player3throws += 1; 
+		values.count_32 += 1; 
+		values.count_ignore2 = 0;
+	};
+]
+/ branch = [
+	if (list.player3schedule.currentvalue == 1) {
+		return trial.3to1;
+	} else if (list.player3schedule.currentvalue == 2) {
+		return trial.3to2;
+	};
+]
+</trial>
+
+Note: trial.2to1 => video shows player 2 throwing the ball to player 1. 
+Player 1 (= values.player) then has to 'decide' where to throw the ball next (= values.recipient) based on
+list.player1schedule
+<trial 2to1>
+/ ontrialbegin = [
+	values.player = 1;
+	if (values.count_ignore2 > values.max_ignore2) 
+		values.max_ignore2 = values.count_ignore2;
+]
+/ stimulusframes = [1= 2to1]
+/ validresponse = (noresponse)
+/ ontrialend = [
+	
+	if (list.player1schedule.nextvalue == 2) {
+		values.recipient = 2; 
+		values.count_player1throws += 1; 
+		values.count_12 += 1; 
+		values.count_ignore2 = 0;
+	} else if (list.player1schedule.nextvalue == 3) {
+		values.recipient = 3; 
+		values.count_player1throws += 1; 
+		values.count_13 += 1; 
+		values.count_ignore2 += 1;
+	};
+]
+/ trialduration = 0
+/ branch = [
+	if (list.player1schedule.currentvalue == 2) {
+		return trial.1to2;
+	} else if (list.player1schedule.currentvalue == 3) {
+		return trial.1to3;
+	};
+]
+</trial>
+
+Note: trial.2to3 => video shows player 2 throwing the ball to player 3. 
+Player 3 (= values.player) then has to 'decide' where to throw the ball next (= values.recipient) based on
+list.player3schedule
+<trial 2to3>
+/ ontrialbegin = [
+	values.player = 3;
+	if (values.count_ignore2 > values.max_ignore2) 
+		values.max_ignore2 = values.count_ignore2;
+		
+]
+/ stimulusframes = [1= 2to3]
+/ validresponse = (noresponse)
+/ trialduration= 0
+/ ontrialend = [
+	
+	if (list.player3schedule.nextvalue == 1) {
+		values.recipient = 1; 
+		values.count_player3throws += 1; 
+		values.count_31 += 1; 
+		values.count_ignore2 += 1;
+	} else if (list.player3schedule.nextvalue == 2) {
+		values.recipient = 2; 
+		values.count_player3throws += 1; 
+		values.count_32 += 1; 
+		values.count_ignore2 = 0;
+	};
+]
+/ branch = [
+	if (list.player3schedule.currentvalue == 1) {
+		return trial.3to1;
+	} else if (list.player3schedule.currentvalue == 2) {
+		return trial.3to2;
+	};
+]
+</trial>
+
+Note: trial.3to2 => video shows player 3 throwing the ball to player 2 after expressions.cyberdecisiontime. 
+Player 2 (= values.player) then has to decide where to throw the ball next (= values.recipient).
+<trial 3to2>
+/ ontrialbegin = [
+	values.player = 2;
+	if (values.count_ignore2 > values.max_ignore2) 
+		values.max_ignore2 = values.count_ignore2;
+	if (values.ignore2_streak1 == 0) 
+		values.ignore2_streak1 = values.max_ignore2;
+		
+	trial.3to2.insertstimulustime(video.3to2, expressions.cyberdecisiontime);
+]
+/ stimulusframes = [1= 3to2_static]
+/ validresponse = (player1, player3, player1label, player3label)
+/ ontrialend = [
+	trial.3to2.resetstimulusframes();
+
+	values.sumrt_player2 += trial.3to2.latency;
+	if (trial.3to2.response == "player1" || trial.3to2.response == "player1label") {
+		values.recipient = 1; 
+		values.count_player2throws += 1; 
+		values.count_21 += 1; 
+		values.sumrt_21 += trial.3to2.latency; 
+		values.count_321 += 1; 
+		values.sumrt_321 += trial.3to2.latency;
+	} else if (trial.3to2.response == "player3" || trial.3to2.response == "player3label") {
+		values.recipient = 3; 
+		values.count_player2throws += 1; 
+		values.count_23 += 1; 
+		values.sumrt_23 += trial.3to2.latency; 
+		values.count_323 += 1; 
+		values.sumrt_323 += trial.3to2.latency;
+	};
+]
+/ branch = [
+	if (values.recipient == 1) {
+		return trial.2to1;
+	} else if (values.recipient == 3) {
+		return trial.2to3;
+	};
+]
+</trial>
+
+Note: trial.3to1=> video shows player 3 throwing the ball to player 1 after expressions.cyberdecisiontime. 
+Player 1 (= values.player) then has to 'decide' where to throw the ball next (= values.recipient) based on
+list.player1schedule
+<trial 3to1>
+/ ontrialbegin = [
+	values.player = 1;	
+	if (values.count_ignore2 > values.max_ignore2) 
+		values.max_ignore2 = values.count_ignore2;
+		
+	trial.3to1.insertstimulustime(video.3to1, expressions.cyberdecisiontime);
+]
+/ stimulusframes = [1= 3to1_static]
+/ validresponse = (noresponse)
+/ trialduration= expressions.cyberdecisiontime
+/ ontrialend = [
+	trial.3to1.resetstimulusframes();
+	
+	if (list.player1schedule.nextvalue == 2) {
+		values.recipient = 2; 
+		values.count_player1throws += 1; 
+		values.count_12 += 1; 
+		values.count_ignore2 = 0;
+	} else if (list.player1schedule.nextvalue == 3) {
+		values.recipient = 3; 
+		values.count_player1throws += 1; 
+		values.count_13 += 1; 
+		values.count_ignore2 += 1;
+	};
+]
+/ branch = [
+	if (list.player1schedule.currentvalue == 2) {
+		return trial.1to2;
+	} else if (list.player1schedule.currentvalue == 3) {
+		return trial.1to3;
+	};
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	MAIN BLOCK
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block game>
+/ trials = [1 = start]
+/ stop = [block.game.trialcount >= parameters.max_trialcount]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT
+**************************************************************************************************************
+**************************************************************************************************************
+<expt main>
+/ blocks = [
+	1=instructions; 
+	2=game;
+]
+</expt>
+
+**************************************************************************************************************
+									End of Script
+**************************************************************************************************************
